@@ -92,7 +92,10 @@ const SERVICE_ID="楽天";
  console.log(finish);
  console.log(finish2);
 
-
+//1位と2位以下の変数、配列をひとつにまとめる
+ const resultTitle = titleData.concat(titleData2);
+ const resultPrice = priceData.concat(priceData2);
+ const resultStore = storeData.concat(storeData2);
 
 const connection = await mysql.createConnection(
     {
@@ -103,19 +106,30 @@ const connection = await mysql.createConnection(
     }
   );
 
-const dbInsert ={id:null, service_id: SERVICE_ID, title: titleData, price:priceData, store: storeData, GetTime: getDate };
+//最初のデータを挿入
+//const dbInsert ={id:null, service_id: SERVICE_ID, title: titleData, price:priceData, store: storeData, GetTime: getDate };
 
-const result = await connection.query("INSERT INTO list SET ?" , dbInsert);
+//const result = await connection.query("INSERT INTO list SET ?" , dbInsert);
 
-var dbInsert2 =[];
-var result2 =[];
-for (let d = 0; d <= 8; d++){
-dbInsert2 ={id:null, service_id: SERVICE_ID, title: titleData2[d], price:priceData2[d], store: storeData2[d], GetTime: getDate };
-result2[d] = await connection.query("INSERT INTO list SET ?" , dbInsert2);
+//2位〜10位を挿入
+// var dbInsert2 =[];
+// var result2 =[];
+// for (let d = 0; d <= 8; d++){
+// dbInsert2 ={id:null, service_id: SERVICE_ID, title: titleData2[d], price:priceData2[d], store: storeData2[d], GetTime: getDate };
+// result2[d] = await connection.query("INSERT INTO list SET ?" , dbInsert2);
+// }
+
+// await result;
+// await result2;
+
+//まとめた配列を利用してDBにデータを入れていく
+var dbInsert =[];
+var resultData =[];
+for (let d = 0; d <= 9; d++){
+dbInsert ={id:null, service_id: SERVICE_ID, title: resultTitle[d], price:resultPrice[d], store: resultStore[d], GetTime: getDate };
+resultData[d] = await connection.query("INSERT INTO list SET ?" , dbInsert);
 }
 
-await result;
-await result2;
 
 
     console.log("-----finish");
@@ -127,10 +141,10 @@ await result2;
 
 
 
-  return finish;
+  return resultData;
 };
 
 
 
 
-console.log(finish);
+//console.log(resultData);
