@@ -1,0 +1,24 @@
+Response
+{
+  "errorType": "TypeError",
+  "errorMessage": "Assignment to constant variable.",
+  "trace": [
+    "TypeError: Assignment to constant variable.",
+    "    at Runtime.exports.handler (/var/task/index.js:65:13)",
+    "    at processTicksAndRejections (internal/process/task_queues.js:97:5)"
+  ]
+}
+
+Function Logs
+START RequestId: a7ca51de-5705-41ce-b72f-0c9d08c83614 Version: $LATEST
+2021-04-16T02:54:18.769Z	a7ca51de-5705-41ce-b72f-0c9d08c83614	INFO	[
+  'ウェルカム・2・アメリカ (完全生産限定盤/デラックス・エディション CD＋Blu-ray) [ プリンス ]',
+  '5,478円',
+  '楽天ブックス'
+]
+2021-04-16T02:54:18.969Z	a7ca51de-5705-41ce-b72f-0c9d08c83614	ERROR	Invoke Error 	{"errorType":"TypeError","errorMessage":"Assignment to constant variable.","stack":["TypeError: Assignment to constant variable.","    at Runtime.exports.handler (/var/task/index.js:65:13)","    at processTicksAndRejections (internal/process/task_queues.js:97:5)"]}
+END RequestId: a7ca51de-5705-41ce-b72f-0c9d08c83614
+REPORT RequestId: a7ca51de-5705-41ce-b72f-0c9d08c83614	Duration: 20822.50 ms	Billed Duration: 20823 ms	Memory Size: 512 MB	Max Memory Used: 512 MB	Init Duration: 401.23 ms
+
+Request ID
+a7ca51de-5705-41ce-b72f-0c9d08c83614
