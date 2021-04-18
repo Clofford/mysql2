@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "chrome-aws-lambda": "^8.0.2",
+    "dotenv": "^8.2.0",
     "mysql2": "^2.2.5",
     "puppeteer": "^8.0.0",
     "puppeteer-core": "^8.0.0"

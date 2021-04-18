@@ -1,5 +1,6 @@
-const chromium = require("chrome-aws-lambda");
-const puppeteer = require("puppeteer-core");
+// const chromium = require("chrome-aws-lambda");
+// const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const mysql = require("mysql2/promise");
 require("dotenv").config();
 const env = process.env;
@@ -7,27 +8,31 @@ const env = process.env;
 /*grobal finish*/
 let finish = [];
 
-exports.handler = async (event, context) => {
-  let browser = null;
+async function runTest() {
+  console.log(`-- start -- ${timestampToTime()}`);
 
   // 接続先のMySQLサーバ情報
   var mysql_host = env.mysql_host;
-  var mysql_user = env.mysql_host;
+  var mysql_user = env.mysql_user;
   var mysql_dbname = env.mysql_dbname;
   var mysql_password = env.mysql_password;
 
   const SERVICE_ID = "楽天";
 
-  browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+  // browser = await puppeteer.launch({
+  //   args: chromium.args,
+  //   defaultViewport: chromium.defaultViewport,
+  //   executablePath: chromium.executablePath,
+  //   headless: chromium.headless,
+  // });
+  let browser = await puppeteer.launch({
+    headless: false,
+    slowMo: 500,
   });
 
   let page = await browser.newPage();
 
-  await page.goto(event.url || "https://ranking.rakuten.co.jp/daily/200534/");
+  await page.goto("https://ranking.rakuten.co.jp/daily/200534/");
   let titleSelector =
     "#rnkRankingMain > div.rnkRanking_top3box.rnkRanking_topBgColor > div:nth-child(3) > div.rnkRanking_detail > div > div > div > div.rnkRanking_itemName > a";
   let priceSelector =
@@ -47,8 +52,6 @@ exports.handler = async (event, context) => {
     return document.querySelector(selector).textContent;
   }, storeSelector);
   const finish = [titleData, priceData, storeData];
-
-  // let titleSelector2 = `#rnkRankingMain > div:nth-child(${i}) > div:nth-child(3) > div.rnkRanking_detail > div > div > div > div.rnkRanking_itemName > a`
 
   var titleData2 = [];
   var priceData2 = [];
@@ -86,9 +89,6 @@ exports.handler = async (event, context) => {
 
   const getDate = new Date();
 
-  console.log(finish);
-  console.log(finish2);
-
   //1位と2位以下の変数、配列をひとつにまとめる
   const resultTitle = titleData.concat(titleData2);
   const resultPrice = priceData.concat(priceData2);
@@ -100,22 +100,6 @@ exports.handler = async (event, context) => {
     password: mysql_password,
     database: mysql_dbname,
   });
-
-  //最初のデータを挿入
-  //const dbInsert ={id:null, service_id: SERVICE_ID, title: titleData, price:priceData, store: storeData, GetTime: getDate };
-
-  //const result = await connection.query("INSERT INTO list SET ?" , dbInsert);
-
-  //2位〜10位を挿入
-  // var dbInsert2 =[];
-  // var result2 =[];
-  // for (let d = 0; d <= 8; d++){
-  // dbInsert2 ={id:null, service_id: SERVICE_ID, title: titleData2[d], price:priceData2[d], store: storeData2[d], GetTime: getDate };
-  // result2[d] = await connection.query("INSERT INTO list SET ?" , dbInsert2);
-  // }
-
-  // await result;
-  // await result2;
 
   //まとめた配列を利用してDBにデータを入れていく
   var dbInsert = [];
@@ -132,9 +116,25 @@ exports.handler = async (event, context) => {
     resultData[d] = await connection.query("INSERT INTO list SET ?", dbInsert);
   }
 
-  console.log("-----finish");
+  console.log(`-- end -- ${timestampToTime()}`);
 
   connection.end();
 
   return resultData;
+}
+
+// runTest();
+
+const timestampToTime = () => {
+  const date = new Date();
+  const yyyy = `${date.getFullYear()}`;
+  // .slice(-2)で文字列中の末尾の2文字を取得する
+  // `0${date.getHoge()}`.slice(-2) と書くことで０埋めをする
+  const MM = `0${date.getMonth() + 1}`.slice(-2); // getMonth()の返り値は0が基点
+  const dd = `0${date.getDate()}`.slice(-2);
+  const HH = `0${date.getHours()}`.slice(-2);
+  const mm = `0${date.getMinutes()}`.slice(-2);
+  const ss = `0${date.getSeconds()}`.slice(-2);
+
+  return `${yyyy}/${MM}/${dd} ${HH}:${mm}:${ss}`;
 };
