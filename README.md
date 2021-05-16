@@ -12,6 +12,7 @@ Please register chrome-aws-lambda as "Layer" to apply Lambda
 
 AWSのLambda上にNode.jsを準備して動かします。
 Chrome-aws-lambdaをLayerとして登録して実行しようとする関数に適用してください。
+mysql２のパッケージからpuppeteerを除き、package.jsonとpackage-lock.jsonファイルと共にzip化してLambdaに読み込んでください。
 
 ## env の環境変数に必要な値
 
